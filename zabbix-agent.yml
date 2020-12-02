@@ -7,8 +7,8 @@
   - name:
     authorized_key:
       user: root
+      key: .ssh/id_rsa.pub
       state: present
-      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
 
   - name: download package and install zabbix-release
     apt:
