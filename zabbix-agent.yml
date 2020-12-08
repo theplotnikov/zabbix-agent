@@ -4,11 +4,6 @@
   become: yes
 
   tasks:
-  - name:
-    authorized_key:
-      user: root
-      key: .ssh/id_rsa.pub
-      state: present
 
   - name: download package and install zabbix-release
     apt:
@@ -42,10 +37,20 @@
     shell: cat /dev/null > /etc/zabbix/zabbix_agentd.conf
 
   - name: configure zabbix-agent
-    shell: echo "PidFile=/var/run/zabbix/zabbix_agentd.pid\nLogFile=/var/log/zabbix/zabbix_agentd.log\nLogFileSize=0\nServer={{ hostvars[inventory_hostname]['ansible_default_ipv4']['gateway'] }}9\nServerActive={{ hostvars[inventory_hostname]['ansible_default_ipv4']['gateway'] }}9\nHostname={{ hostvars[inventory_hostname]['ansible_hostname'] }}\nInclude=/etc/zabbix/zabbix_agentd.d/*.conf\nInclude=/etc/zabbix/global_deb_zabbix_mods/zabbix_agent_custom.conf" >> /etc/zabbix/zabbix_agentd.conf
+    shell: echo "PidFile=/var/run/zabbix/zabbix_agentd.pid\nLogFile=/var/log/zabbix/zabbix_agentd.log\nLogFileSize=0\nServer={{ hostvars[inventory_hostname]['ansible_default_ipv4']['gateway'] }}9\nServerActive={{ hostvars[inventory_hostn
+
+  - name: delete logs
+    file:
+      path: /var/log/zabbix/*
+      state: absent
 
   - name: enable zabbix-agent autostart
     systemd:
       name: zabbix-agent
       enabled: yes
       state: started
+
+  - name: restart zabbix-agent
+    service:
+      name: zabbix-agent
+      state: restarted
