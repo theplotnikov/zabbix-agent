@@ -7,7 +7,7 @@
 
   - name: download package and install zabbix-release
     apt:
-      deb: http://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1%2Bbionic_all.deb
+      deb: http://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1%2Bbuster_all.deb
 
   - name: install zabbix-agent
     apt:
@@ -37,6 +37,7 @@
     shell: cat /dev/null > /etc/zabbix/zabbix_agentd.conf
 
   - name: configure zabbix-agent
+
     shell: echo "PidFile=/var/run/zabbix/zabbix_agentd.pid\nLogFile=/var/log/zabbix/zabbix_agentd.log\nLogFileSize=0\nServer={{ hostvars[inventory_hostname]['ansible_default_ipv4']['gateway'] }}9\nServerActive={{ hostvars[inventory_hostname]['ansible_default_ipv4']['gateway'] }}9\nHostname={{ hostvars[inventory_hostname]['ansible_hostname'] }}\nInclude=/etc/zabbix/zabbix_agentd.d/*.conf\nInclude=/etc/zabbix/global_deb_zabbix_mods/zabbix_agent_custom.conf" >> /etc/zabbix/zabbix_agentd.conf
 
   - name: delete logs
