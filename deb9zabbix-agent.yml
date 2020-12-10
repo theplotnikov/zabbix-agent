@@ -1,0 +1,39 @@
+---
+- name: zabbix-agent installation
+  hosts: all
+  become: yes
+
+  tasks:
+
+  - name: download package and install zabbix-release
+    apt:
+      deb: http://repo.zabbix.com/zabbix/5.0/debian/pool/main/z/zabbix-release/zabbix-release_5.0-1%2Bstretch_all.deb
+
+  - name: install zabbix-agent
+    apt:
+      name: zabbix-agent
+      state: latest
+      update_cache: yes
+
+  - name: download and unzip zabbix scripts
+    unarchive:
+      src: https://github.com/668-010/global_deb_zabbix_mods/archive/master.zip
+      dest: /tmp/
+      remote_src: yes
+
+  - name: copy zabbix scripts to /etc/
+    copy:
+      src: /tmp/global_deb_zabbix_mods-master/global_deb_zabbix_mods
+      dest: /etc/zabbix/
+      remote_src: yes
+
+  - name: copy zabbix scripts to sudoers
+    copy:
+      src: /tmp/global_deb_zabbix_mods-master/sudo/global_zabbix
+      dest: /etc/sudoers.d/global_zabbix
+      remote_src: yes
+
+  - name: clear zabbix-agent config
+    shell: cat /dev/null > /etc/zabbix/zabbix_agentd.conf
+
+  - name: configure zabbix-agent
